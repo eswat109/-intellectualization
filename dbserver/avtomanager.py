@@ -17,6 +17,11 @@ class AvtoManager :
             return ''
         return self.separator.join(values)
 
+    def addbyidprice(self, id: int, price: int) -> None:
+        if price <= 0 or id <= 0:
+            raise ValueError('price is under zero')
+        return self.dbw.addbyparams({'id': id,'price': price})
+
     def addbyprice(self, price: int) -> None:
         if price <= 0:
             raise ValueError('price is under zero')
@@ -34,6 +39,14 @@ class AvtoManager :
     @dispatch(dict)
     def findbyid(self, obj: dict) -> dict:
         return self.findbyid(obj['id'])
+
+    @dispatch(int)
+    def deletebyid(self, id: int) -> None:
+        return self.dbw.deletebyparams({'id': id})
+
+    @dispatch(dict)
+    def deletebyid(self, obj: dict) -> None:
+        return self.deletebyid(obj['id'])
 
     @dispatch(int)
     def findbyprice(self, price: int) -> list[dict]:
@@ -56,10 +69,11 @@ class AvtoManager :
 if __name__ == '__main__':
     AV = AvtoManager()
     #AV.addbyprice(2000)
-    obj = AV.findbyid(1)
+    AV.addbyidprice(4, 1000)
+    obj = AV.findbyid(4)
     print(obj)
-    print(AV.findall())
+    """print(AV.findall())
     AV.updateprice(obj, 2200)
     obj = AV.findbyid(1)
     print(obj)
-    print(AV.findall())
+    print(AV.findall())"""

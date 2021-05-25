@@ -11,12 +11,18 @@ class CharManager :
     def __splitvalues__(self, values: str) -> list[str]:
         if not values:
             return []
-        return values.split(self.separator)
+        res = values.split(self.separator)
+        if '' in res:
+            res.remove('')
+        return res
 
     def __mergevalues__(self, values: list) -> str:
         if not values:
             return ''
         return self.separator.join(values)
+
+    def gettitles(self):
+        return self.dbw.gettitles()
 
     """def add(self, name: str, type: str=None, values: tuple[str]=None) -> None:
         if not self.dbw.findbyparams({'name': name}) :
@@ -29,6 +35,8 @@ class CharManager :
     def addbyname(self, name: str) -> None:
         if not name:
             raise ValueError('name is empty')
+        if self.findbyname(name):
+            return
         return self.dbw.addbyparams({'name': name})
 
     def findall(self) -> list[dict]:
@@ -45,14 +53,12 @@ class CharManager :
         return self.findbyid(obj['id'])
     
     @dispatch(int)
-    def deletebyid(self, id: int) -> dict:
-        if self.dbw.deletebyparams({'id': id}):
-            return self.dbw.findbyparams({'id': id})[0]
-        return None
+    def deletebyid(self, id: int) -> None:
+        return self.dbw.deletebyparams({'id': id})
 
     @dispatch(dict)
-    def deletebyid(self, obj: dict) -> dict:
-        return self.findbyid(obj['id'])
+    def deletebyid(self, obj: dict) -> None:
+        return self.deletebyid(obj['id'])
 
     @dispatch(str)
     def findbyname(self, name: str) -> list[dict]:
@@ -148,7 +154,8 @@ class CharManager :
 
 if __name__ == '__main__':
     CM = CharManager()
-    obj = CM.findbyid(7)
+
+    """obj = CM.findbyid(7)
     print(obj)
     CM.addvalue(obj, 'false')
     obj = CM.findbyid(obj)
@@ -158,7 +165,7 @@ if __name__ == '__main__':
     print(obj)
     CM.deletevalue(obj)
     obj = CM.findbyid(obj)
-    print(obj)
+    print(obj)"""
     """CM.addvalue(obj, '')
     obj = CM.findbyid(obj)
     print(obj)
