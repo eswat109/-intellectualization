@@ -14,13 +14,17 @@ from PyQt5.QtWidgets import QHeaderView
 from dbserver.charmanager import CharManager
 from dbserver.avtomanager import AvtoManager
 from dbserver.avtocharmanager import AvtoCharManager
+from dbserver.dbworker import DBWorker
 
 class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
-        self.CM = CharManager()
-        self.AM = AvtoManager()
-        self.ACM = AvtoCharManager()
+        self.dbwCM = DBWorker()
+        self.dbwAM = DBWorker()
+        self.dbwACM = DBWorker()
+        self.manC = CharManager(self.dbwCM)
+        self.manA = AvtoManager(self.dbwAM)
+        self.manAC = AvtoCharManager(self.dbwACM)
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(500, 500)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -51,6 +55,7 @@ class Ui_MainWindow(object):
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_2.setGeometry(QtCore.QRect(30, 400, 93, 28))
         self.pushButton_2.setObjectName("pushButton_2")
+        self.pushButton.setHidden(True)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 500, 26))
@@ -74,7 +79,9 @@ class Ui_MainWindow(object):
 class AddAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def setComboBox(self):
-        self.avtodata = self.AM.findall()
+        #self.dbwAM.openCon()
+        self.avtodata = self.manA.findall()
+        #self.dbwAM.closeCon()
         self.ids = [d['id'] for d in self.avtodata]
         self.ids.insert(0, '')
         for i in self.ids:
@@ -85,7 +92,9 @@ class AddAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if ind:
             self.tableWidget.setEnabled(True)
             self.pushButton.setEnabled(True)
-            self.curavtoobj = self.AM.findbyid(int(self.ids[ind]))
+            #self.dbwAM.openCon()
+            self.curavtoobj = self.manA.findbyid(int(self.ids[ind]))
+            #self.dbwAM.closeCon()
         else:
             self.tableWidget.setEnabled(False)
             self.pushButton.setEnabled(False)
@@ -100,13 +109,17 @@ class AddAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         ch_id = self.chardata[row_]['id']
         av_id = self.curavtoobj['id']
         if chb.isChecked():
-            self.ACM.add(int(av_id), int(ch_id))
+            #self.dbwAC.openCon()
+            self.manAC.addbyac(int(av_id), int(ch_id))
+            #self.dbwAC.closeCon()
         else:
-            self.ACM.deletebyav(int(av_id), int(ch_id))
+            #self.dbwAC.openCon()
+            self.manAC.deletebyac(int(av_id), int(ch_id))
+            #self.dbwAC.closeCon()
 
     def setTable(self):
-        self.chardata = self.CM.findall()
-        titles = self.CM.gettitles()
+        self.chardata = self.manC.findall()
+        titles = self.manC.gettitles()
         titles_ = ['id', 'Имя', 'Тип', 'Значения', 'Добавлено']
         self.tableWidget.setColumnCount(len(titles_))
         self.tableWidget.setRowCount(len(self.chardata))
@@ -129,7 +142,7 @@ class AddAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             checkBox.index = i
             avto_id = self.curavtoobj['id']
             char_id = d['id']
-            resreq = self.ACM.findbyavtochar(int(avto_id), int(char_id))
+            resreq = self.manAC.findbyavtochar(int(avto_id), int(char_id))
             if resreq:
                 checkBox.toggle()
             checkBox.stateChanged.connect(lambda: self.chbIsChanged(int(i)))
@@ -147,11 +160,14 @@ class AddAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
 
 if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    #MainWindow = QtWidgets.QMainWindow()
-    #ui = Ui_MainWindow()
-    #ui.setupUi(MainWindow)
-    addcharwin = AddAvtoCharWindow()
-    addcharwin.show()
-    sys.exit(app.exec_())
+    try:
+        import sys
+        app = QtWidgets.QApplication(sys.argv)
+        #MainWindow = QtWidgets.QMainWindow()
+        #ui = Ui_MainWindow()
+        #ui.setupUi(MainWindow)
+        addcharwin = AddAvtoCharWindow()
+        addcharwin.show()
+        sys.exit(app.exec_())
+    except Exception as e:
+        print(e)

@@ -12,6 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtCore import Qt
 from dbserver.avtomanager import AvtoManager
+from dbserver.dbworker import DBWorker
 
 
 class Ui_MainWindow(object):
@@ -57,7 +58,8 @@ class Ui_MainWindow(object):
         self.setuptable()
 
     def setupUi(self, MainWindow):
-        self.AM = AvtoManager()
+        dbw = DBWorker()
+        self.AM = AvtoManager(dbw)
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(500, 500)
         self.centralwidget = QtWidgets.QWidget(MainWindow)

@@ -5,9 +5,11 @@ from multipledispatch import dispatch
 
 class AvtoCharManager :
 
-    def __init__(self):
-        self.dbw = DBWorker('avto_characteristics')
-        self.am = AvtoManager()
+    def __init__(self, dbw: DBWorker):
+        self.dbw = dbw
+        #self.dbw = DBWorker('avto_characteristics')
+        self.table = 'avto_characteristics'
+        #self.am = AvtoManager()
         self.separator = ';'
 
     def __splitvalues__(self, values: str) -> list[str]:
@@ -21,12 +23,12 @@ class AvtoCharManager :
         return self.separator.join(values)
 
     def findall(self) -> list[dict]:
-        return self.dbw.findall()
+        return self.dbw.findall(self.table)
 
     @dispatch(int)
     def findbyid(self, id: int) -> dict:
-        if self.dbw.findbyparams({'id': id}):
-            return self.dbw.findbyparams({'id': id})[0]
+        if self.dbw.findbyparams({'id': id}, self.table):
+            return self.dbw.findbyparams({'id': id}, self.table)[0]
         return None
 
     @dispatch(dict)
@@ -35,7 +37,7 @@ class AvtoCharManager :
 
     @dispatch(int)
     def findbyavto(self, avto_id: int) -> list[dict]:
-        return self.dbw.findbyparams({'avto': avto_id})
+        return self.dbw.findbyparams({'avto': avto_id}, self.table)
 
     @dispatch(dict)
     def findbyavto(self, avto_obj: dict) -> list[dict]:
@@ -43,7 +45,7 @@ class AvtoCharManager :
 
     @dispatch(int)
     def findbychar(self, char_id: int) -> list[dict]:
-        return self.dbw.findbyparams({'char': char_id})
+        return self.dbw.findbyparams({'char': char_id}, self.table)
 
     @dispatch(dict)
     def findbychar(self, char_obj: dict) -> list[dict]:
@@ -51,19 +53,19 @@ class AvtoCharManager :
 
     @dispatch(int, int)
     def findbyavtochar(self, avto_id: int, char_id: int) -> list[dict]:
-        return self.dbw.findbyparams({'avto': avto_id,'char': char_id})
+        return self.dbw.findbyparams({'avto': avto_id,'char': char_id}, self.table)
 
     @dispatch(dict, dict)
     def findbyavtochar(self, avto_obj: dict, char_obj: dict) -> list[dict]:
         return self.findbyavto(avto_obj['id'], char_obj['id'])
 
     @dispatch(int, int)
-    def add(self, avto_id: int, char_id: int) -> None:
-        return self.dbw.addbyparams({'avto': avto_id, 'char': char_id})
+    def addbyac(self, avto_id: int, char_id: int) -> None:
+        return self.dbw.addbyparams({'avto': avto_id, 'char': char_id}, self.table)
 
     @dispatch(int, int, str)
     def add(self, avto_id: int, char_id: int, value: str) -> None:
-        return self.dbw.addbyparams({'avto': avto_id, 'char': char_id, 'value': value})
+        return self.dbw.addbyparams({'avto': avto_id, 'char': char_id, 'value': value}, self.table)
 
     @dispatch(dict, dict, str)
     def add(self, avto_obj: dict, char_obj: dict, value: str) -> None:
@@ -71,7 +73,7 @@ class AvtoCharManager :
 
     @dispatch(int, str)
     def updatevalue(self, id: int, value: str) -> None:
-        return self.dbw.updatebyparams({'id': id, 'value': value})
+        return self.dbw.updatebyparams({'id': id, 'value': value}, self.table)
 
     @dispatch(dict, str)
     def updatevalue(self, obj: dict, value: str) -> None:
@@ -79,18 +81,28 @@ class AvtoCharManager :
 
     @dispatch(int)
     def deletebyid(self, id: int) -> None:
-        return self.dbw.deletebyparams({'id': id})
+        return self.dbw.deletebyparams({'id': id}, self.table)
 
     @dispatch(dict)
     def deletebyid(self, obj: dict) -> None:
         return self.deletebyid(obj['id'])
 
-    @dispatch(int)
-    def deletebyav(self, avto_id: int, char_id: int) -> None:
-        return self.dbw.deletebyparams({'avto': avto_id, 'char': char_id})
+    @dispatch(int, int)
+    def deletebyac(self, avto_id: int, char_id: int) -> None:
+        return self.dbw.deletebyparams({'avto': avto_id, 'char': char_id}, self.table)
 
 if __name__ == '__main__':
-    ACM = AvtoCharManager()
+    dbw = DBWorker()
+    ACM = AvtoCharManager(dbw)
     objs = ACM.findall()
     print(objs)
+    dbw.closeCon()
+    dbw.openCon()
+    ACM.addbyac(1, 18)
+    obj = ACM.findbyavtochar(1, 18)
+    print(obj)
+    ACM.deletebyac(1, 18)
+    obj = ACM.findbyavtochar(1, 18)
+    print(obj)
+    """"""
     pass

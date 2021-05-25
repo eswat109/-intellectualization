@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QHeaderView
 from PyQt5.QtCore import Qt
 from dbserver.charmanager import CharManager
+from dbserver.dbworker import DBWorker
 
 
 class Ui_MainWindow(object):
@@ -39,7 +40,8 @@ class Ui_MainWindow(object):
         self.setuptable()
 
     def setupUi(self, MainWindow):
-        self.CM = CharManager()
+        dbw = DBWorker()
+        self.CM = CharManager(dbw)
         self.__data = self.CM.findall()
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(492, 492)
