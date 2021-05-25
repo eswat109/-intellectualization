@@ -125,14 +125,14 @@ class DBWorker:
     def updatebyparams(self, params: dict, tables: str) -> None:
         self.cursor = self.conn.cursor()
         strvalues = ""
-        for colname in self.gettitleswoclose()[1:]:
+        for colname in self.gettitleswoclose(tables)[1:]:
             if params.get(colname) != None:
                 if params.get(colname) == '':
                     params[colname] = None
                 if strvalues != "":
                     strvalues += ', '
                 strvalues += colname + '= :' + colname
-        key = self.gettitleswoclose()[0]
+        key = self.gettitleswoclose(tables)[0]
         strkey = key + '= :' + key
         req = "UPDATE {} SET {} WHERE {}".format(tables, strvalues, strkey)
         self.cursor.execute(req, params)
@@ -177,6 +177,13 @@ class DBWorker:
         self.cursor.execute("INSERT INTO {} VALUES {}".format(self.tablename, strvalues), obj)
         self.conn.commit()"""
 
+    def findallfromall(self, tables: str) -> list[dict]:
+        self.cursor = self.conn.cursor()
+        self.cursor.execute("SELECT * FROM {} ".format(tables))
+        #return self.cursor.fetchall()
+        res = self.cursor.fetchall()
+        self.cursor.close()
+        return [dict(t) for t in res]
 
 
 

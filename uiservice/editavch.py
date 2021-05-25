@@ -9,24 +9,10 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QHeaderView
-from dbserver.charmanager import CharManager
-from dbserver.avtomanager import AvtoManager
-from dbserver.avtocharmanager import AvtoCharManager
-from dbserver.dbworker import DBWorker
 
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        
-        self.dbwCM = DBWorker()
-        self.dbwAM = DBWorker()
-        self.dbwACM = DBWorker()
-        self.manC = CharManager(self.dbwCM)
-        self.manA = AvtoManager(self.dbwAM)
-        self.manAC = AvtoCharManager(self.dbwACM)
-
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(500, 401)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -58,18 +44,39 @@ class Ui_MainWindow(object):
         self.comboBoxChar = QtWidgets.QComboBox(self.centralwidget)
         self.comboBoxChar.setGeometry(QtCore.QRect(240, 120, 181, 22))
         self.comboBoxChar.setObjectName("comboBoxChar")
-        self.comboBoxValue = QtWidgets.QComboBox(self.centralwidget)
-        self.comboBoxValue.setGeometry(QtCore.QRect(240, 160, 181, 22))
-        self.comboBoxValue.setObjectName("comboBoxValue")
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton.setGeometry(QtCore.QRect(240, 220, 81, 28))
+        self.pushButton.setGeometry(QtCore.QRect(340, 310, 91, 28))
         self.pushButton.setObjectName("pushButton")
         self.pushButton_2 = QtWidgets.QPushButton(self.centralwidget)
-        self.pushButton_2.setGeometry(QtCore.QRect(340, 220, 81, 28))
+        self.pushButton_2.setGeometry(QtCore.QRect(240, 310, 91, 28))
         self.pushButton_2.setObjectName("pushButton_2")
         self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton_3.setGeometry(QtCore.QRect(40, 310, 93, 28))
         self.pushButton_3.setObjectName("pushButton_3")
+        self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
+        self.tabWidget.setGeometry(QtCore.QRect(130, 160, 321, 91))
+        self.tabWidget.setObjectName("tabWidget")
+        self.tab_Empty = QtWidgets.QWidget()
+        self.tab_Empty.setObjectName("tab_Empty")
+        self.tabWidget.addTab(self.tab_Empty, "")
+        self.tabInt = QtWidgets.QWidget()
+        self.tabInt.setObjectName("tabInt")
+        self.spinBox = QtWidgets.QSpinBox(self.tabInt)
+        self.spinBox.setGeometry(QtCore.QRect(160, 20, 111, 22))
+        self.spinBox.setObjectName("spinBox")
+        self.tabWidget.addTab(self.tabInt, "")
+        self.tabLog = QtWidgets.QWidget()
+        self.tabLog.setObjectName("tabLog")
+        self.comboBoxValue = QtWidgets.QComboBox(self.tabLog)
+        self.comboBoxValue.setGeometry(QtCore.QRect(110, 20, 181, 22))
+        self.comboBoxValue.setObjectName("comboBoxValue")
+        self.tabWidget.addTab(self.tabLog, "")
+        self.tabEnum = QtWidgets.QWidget()
+        self.tabEnum.setObjectName("tabEnum")
+        self.comboBoxValue_2 = QtWidgets.QComboBox(self.tabEnum)
+        self.comboBoxValue_2.setGeometry(QtCore.QRect(110, 20, 181, 22))
+        self.comboBoxValue_2.setObjectName("comboBoxValue_2")
+        self.tabWidget.addTab(self.tabEnum, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 500, 26))
@@ -80,6 +87,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -91,19 +99,7 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Сохранить"))
         self.pushButton_2.setText(_translate("MainWindow", "Удалить"))
         self.pushButton_3.setText(_translate("MainWindow", "Назад"))
-
-class EditAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.setupUi(self)
-
-if __name__ == "__main__":
-    import sys
-    app = QtWidgets.QApplication(sys.argv)
-    #MainWindow = QtWidgets.QMainWindow()
-    #ui = Ui_MainWindow()
-    #ui.setupUi(MainWindow)
-    addcharwin = EditAvtoCharWindow()
-    addcharwin.show()
-    sys.exit(app.exec_())
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Empty), _translate("MainWindow", "Empty"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabInt), _translate("MainWindow", "Int"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabLog), _translate("MainWindow", "Log"))
+        self.tabWidget.setTabText(self.tabWidget.indexOf(self.tabEnum), _translate("MainWindow", "Enum"))
