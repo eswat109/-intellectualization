@@ -17,6 +17,9 @@ class AvtoManager :
             return ''
         return self.separator.join(values)
 
+    def gettitles(self):
+        return self.dbw.gettitles()
+
     def addbyidprice(self, id: int, price: int) -> None:
         if price <= 0 or id <= 0:
             raise ValueError('price is under zero')

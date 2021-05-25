@@ -6,7 +6,7 @@ from multipledispatch import dispatch
 class AvtoCharManager :
 
     def __init__(self):
-        self.dbw = DBWorker('avto_characteristic')
+        self.dbw = DBWorker('avto_characteristics')
         self.am = AvtoManager()
         self.separator = ';'
 
@@ -57,6 +57,10 @@ class AvtoCharManager :
     def findbyavtochar(self, avto_obj: dict, char_obj: dict) -> list[dict]:
         return self.findbyavto(avto_obj['id'], char_obj['id'])
 
+    @dispatch(int, int)
+    def add(self, avto_id: int, char_id: int) -> None:
+        return self.dbw.addbyparams({'avto': avto_id, 'char': char_id})
+
     @dispatch(int, int, str)
     def add(self, avto_id: int, char_id: int, value: str) -> None:
         return self.dbw.addbyparams({'avto': avto_id, 'char': char_id, 'value': value})
@@ -81,6 +85,12 @@ class AvtoCharManager :
     def deletebyid(self, obj: dict) -> None:
         return self.deletebyid(obj['id'])
 
-if __name__ == '__main__':
+    @dispatch(int)
+    def deletebyav(self, avto_id: int, char_id: int) -> None:
+        return self.dbw.deletebyparams({'avto': avto_id, 'char': char_id})
 
+if __name__ == '__main__':
+    ACM = AvtoCharManager()
+    objs = ACM.findall()
+    print(objs)
     pass

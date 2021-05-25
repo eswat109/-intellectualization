@@ -39,11 +39,13 @@ class DBWorker:
         return [dict(t) for t in res]"""
 
     def findbyparams(self, params: dict) -> list[dict]:
-        strvalues = ""
+        strvalues = "("
         for colname in self.gettitles():
             if params.get(colname):
-                strvalues += colname + '= :' + colname + ' '
-        self.cursor.execute("SELECT * FROM {} WHERE {}".format(self.tablename, strvalues), params)
+                strvalues += colname + '= :' + colname + ' AND '
+        strvalues += " 1=1)"
+        req = "SELECT * FROM {} WHERE {}".format(self.tablename, strvalues)
+        self.cursor.execute(req, params)
         #return self.cursor.fetchall()
         res = self.cursor.fetchall()
         return [dict(t) for t in res]

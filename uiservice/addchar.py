@@ -84,6 +84,7 @@ class Ui_MainWindow(object):
         self.pushButton_2.clicked.connect(lambda: self.delrowtable())
         self.pushButton_3.setText(_translate("MainWindow", "Назад"))
 
+
 class AddCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
