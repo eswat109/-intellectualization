@@ -137,7 +137,6 @@ class AddAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 item.setTextAlignment(Qt.AlignCenter)
                 item.setFlags(item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
                 self.tableWidget.setItem(i, j, item)
-
             checkBox = QtWidgets.QCheckBox()
             checkBox.index = i
             avto_id = self.curavtoobj['id']

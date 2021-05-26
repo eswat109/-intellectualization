@@ -188,76 +188,77 @@ class DBWorker:
         self.cursor.close()
         return [dict(t) for t in res]
 
-def getall():
-    dbw = DBWorker()
-    res = dbw.findallfromall()
-    print(res)
-    tmp_id = -1
-    tmp_dict = {}
-    allres = []
-    for r in res:
-        cur_id = r['id']
-        if cur_id != tmp_id :
-            if tmp_id != -1:
-                allres.append(tmp_dict)
-                tmp_dict = {}
-            tmp_id = cur_id
-            tmp_dict['id'] = r['id']
-            tmp_dict['price'] = r['price']
-        if not tmp_dict.get(r['name']):
-            tmp_dict[r['name']] = r['value']
-        else:
-            tmp_dict[r['name']] = tmp_dict[r['name']]+';'+ r['value']
-    allres.append(tmp_dict)
-    print(allres)
-    return allres
+    def getall(self):
+        dbw = DBWorker()
+        res = dbw.findallfromall()
+        #print(res)
+        tmp_id = -1
+        tmp_dict = {}
+        allres = []
+        for r in res:
+            cur_id = r['id']
+            if cur_id != tmp_id :
+                if tmp_id != -1:
+                    allres.append(tmp_dict)
+                    tmp_dict = {}
+                tmp_id = cur_id
+                tmp_dict['id'] = r['id']
+                tmp_dict['price'] = r['price']
+            if not tmp_dict.get(r['name']):
+                tmp_dict[r['name']] = r['value']
+            else:
+                tmp_dict[r['name']] = tmp_dict[r['name']]+';'+ r['value']
+        allres.append(tmp_dict)
+        #print(allres)
+        return allres
 
-def pricechars(data: list[dict]) -> dict[dict[tuple]]:
-    res = {}
-    for d in data:
-        curprice = d['price']
-        tempdict = {}
-        if not res.get(curprice):
+    def pricechars(self, data: list[dict]) -> dict[dict[tuple]]:
+        res = {}
+        for d in data:
+            curprice = d['price']
             tempdict = {}
-        else:
-            tempdict = res[curprice]
-        for k in d.keys():
-            if k in ['id', 'price']:
-                continue
-            value = None
-            if not d[k]:
-                value = 'None'
+            if not res.get(curprice):
+                tempdict = {}
             else:
-                value = d[k]
-            if not tempdict.get(k):
-                tempdict[k] = [value,]
-            else:
-                tempdict[k].append(value)
-        res[curprice] = tempdict
-    print(res)
-    return res
+                tempdict = res[curprice]
+            for k in d.keys():
+                if k in ['id', 'price']:
+                    continue
+                value = None
+                if not d[k]:
+                    value = 'None'
+                else:
+                    value = d[k]
+                if not tempdict.get(k):
+                    tempdict[k] = [value,]
+                else:
+                    tempdict[k].append(value)
+            res[curprice] = tempdict
+        #print(res)
+        return res
 
-def getprices(obj: dict, data: dict[dict[tuple]]) -> list:
-    res = []
-    for k in obj.keys():
-        if not obj[k]:
-            obj[k] = 'None'
-    for price in data:
-        pdict = data[price]
-        flag = True
-        for k in pdict.keys():
-            if not obj.get(k):
-                continue
-            n = obj[k]
-            nn = pdict[k]
-            if not (n in nn):
-                flag = False
-        if flag:
-            res.append(price)
-    return res
+    def getprices(self, obj: dict, data: dict[dict[tuple]]) -> list:
+        res = []
+        for k in obj.keys():
+            if not obj[k]:
+                obj[k] = 'None'
+        for price in data:
+            pdict = data[price]
+            flag = True
+            for k in pdict.keys():
+                if not obj.get(k):
+                    continue
+                n = obj[k]
+                nn = pdict[k]
+                if not (n in nn) and n != 'None':
+                    flag = False
+            if flag:
+                res.append(price)
+        return res
 
 if __name__ == '__main__':
-    res = getprices({'Название': 'Toyota Corolla', 'Год покупки': '1999', 'Тип двигателя': None}, pricechars(getall()))
+    dbw = DBWorker()
+    res = dbw.getprices({'Название': 'Toyota Corolla', 'Год покупки': '1999', 'Тип двигателя': None}, dbw.pricechars(dbw.getall()))
     print(res)
     """
 
