@@ -177,26 +177,87 @@ class DBWorker:
         self.cursor.execute("INSERT INTO {} VALUES {}".format(self.tablename, strvalues), obj)
         self.conn.commit()"""
 
-    def findallfromall(self, tables: str) -> list[dict]:
+    def findallfromall(self) -> list[dict]:
         self.cursor = self.conn.cursor()
-        self.cursor.execute("SELECT * FROM {} ".format(tables))
+        self.cursor.execute("select a.id, a.price, c.name, ac.value  from avtomobiles a \
+            join avto_characteristics ac on ac.avto = a.id \
+            join characteristics c on c.id = ac.char \
+            order by a.id")
         #return self.cursor.fetchall()
         res = self.cursor.fetchall()
         self.cursor.close()
         return [dict(t) for t in res]
 
+def getall():
+    dbw = DBWorker()
+    res = dbw.findallfromall()
+    print(res)
+    tmp_id = -1
+    tmp_dict = {}
+    allres = []
+    for r in res:
+        cur_id = r['id']
+        if cur_id != tmp_id :
+            if tmp_id != -1:
+                allres.append(tmp_dict)
+                tmp_dict = {}
+            tmp_id = cur_id
+            tmp_dict['id'] = r['id']
+            tmp_dict['price'] = r['price']
+        if not tmp_dict.get(r['name']):
+            tmp_dict[r['name']] = r['value']
+        else:
+            tmp_dict[r['name']] = tmp_dict[r['name']]+';'+ r['value']
+    allres.append(tmp_dict)
+    print(allres)
+    return allres
 
+def pricechars(data: list[dict]) -> dict[dict[tuple]]:
+    res = {}
+    for d in data:
+        curprice = d['price']
+        tempdict = {}
+        if not res.get(curprice):
+            tempdict = {}
+        else:
+            tempdict = res[curprice]
+        for k in d.keys():
+            if k in ['id', 'price']:
+                continue
+            value = None
+            if not d[k]:
+                value = 'None'
+            else:
+                value = d[k]
+            if not tempdict.get(k):
+                tempdict[k] = [value,]
+            else:
+                tempdict[k].append(value)
+        res[curprice] = tempdict
+    print(res)
+    return res
+
+def getprices(obj: dict, data: dict[dict[tuple]]) -> list:
+    res = []
+    for k in obj.keys():
+        if not obj[k]:
+            obj[k] = 'None'
+    for price in data:
+        pdict = data[price]
+        flag = True
+        for k in pdict.keys():
+            if not obj.get(k):
+                continue
+            n = obj[k]
+            nn = pdict[k]
+            if not (n in nn):
+                flag = False
+        if flag:
+            res.append(price)
+    return res
 
 if __name__ == '__main__':
-    dbw = DBWorker('characteristics')
-    #dbw.addobj((None, 'e6', 'log', None))
-    #dbw.addbyparams({'name': 'asddf'})
-    #dbw.deletebyparams({'id': 15})
-    #dbw.updatebyparams({'id': 7, 'type': 'e'})
-
-    dbw.updatebyparams({'id': 7, 'cvalues': ''})
-    #dbw.printall()
-    res = dbw.findall()
+    res = getprices({'Название': 'Toyota Corolla', 'Год покупки': '1999', 'Тип двигателя': None}, pricechars(getall()))
     print(res)
     """
 

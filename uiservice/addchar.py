@@ -87,10 +87,17 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(_translate("MainWindow", "Назад"))
 
 
+
 class AddCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.pushButton_3.clicked.connect(self.returnM)
+
+    def returnM(self):
+        self.close()
+        if self.parent():
+            self.parent().show()
 
 
 if __name__ == "__main__":

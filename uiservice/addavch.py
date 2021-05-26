@@ -148,9 +148,14 @@ class AddAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             checkBox.stateChanged.connect(lambda: self.chbIsChanged(int(i)))
             self.tableWidget.setCellWidget(i, len(titles_) - 1, checkBox)
 
+    def returnM(self):
+        self.close()
+        if self.parent():
+            self.parent().show()
 
     def setConnects(self):
         self.comboBoxChar.currentIndexChanged.connect(self.changedComboBox)
+        self.pushButton_2.clicked.connect(self.returnM)
 
     def __init__(self, parent=None):
         super().__init__(parent)

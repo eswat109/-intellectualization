@@ -9,6 +9,11 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from uiservice.addchar import AddCharWindow
+from uiservice.editchar import EditCharWindow
+from uiservice.addavto import AddAvtoWindow
+from uiservice.addavch import AddAvtoCharWindow
+from uiservice.editavch_ import EditAvtoCharWindow
 
 
 class Ui_MainWindow(object):
@@ -60,3 +65,50 @@ class Ui_MainWindow(object):
         self.pushButton_5.setText(_translate("MainWindow", "Добавление значений автомобилю "))
         self.pushButton_6.setText(_translate("MainWindow", "Проверка целостности"))
         self.pushButton_7.setText(_translate("MainWindow", "Классификация"))
+
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.pushButton.clicked.connect(self.openAddChar)
+        self.pushButton_2.clicked.connect(self.openEditChar)
+        self.pushButton_3.clicked.connect(self.openAddAvto)
+        self.pushButton_4.clicked.connect(self.openAddAvtoChar)
+        self.pushButton_5.clicked.connect(self.openEditAvtoChar)
+
+    def openAddChar(self):
+        self.close()
+        self.AddCharW = AddCharWindow(self)
+        self.AddCharW.show()
+
+    def openEditChar(self):
+        self.close()
+        self.EditCharW = EditCharWindow(self)
+        self.EditCharW.show()
+
+    def openAddAvto(self):
+        self.close()
+        self.AddAvtoW = AddAvtoWindow(self)
+        self.AddAvtoW.show()
+
+    def openAddAvtoChar(self):
+        self.close()
+        self.AddAvtoCharW = AddAvtoCharWindow(self)
+        self.AddAvtoCharW.show()
+
+    def openEditAvtoChar(self):
+        self.close()
+        self.EditAvtoCharW = EditAvtoCharWindow(self)
+        self.EditAvtoCharW.show()
+
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    #MainWindow = QtWidgets.QMainWindow()
+    #ui = Ui_MainWindow()
+    #ui.setupUi(MainWindow)
+    mainwin = MainWindow()
+    mainwin.show()
+    sys.exit(app.exec_())

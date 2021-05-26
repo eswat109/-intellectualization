@@ -110,6 +110,8 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
@@ -127,7 +129,14 @@ class AddAvtoWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        self.pushButton_3.clicked.connect(self.returnM)
         self.setuptable()
+
+
+    def returnM(self):
+        self.close()
+        if self.parent():
+            self.parent().show()
 
 
 if __name__ == "__main__":

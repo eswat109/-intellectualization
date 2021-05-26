@@ -11,6 +11,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from dbserver.charmanager import CharManager
+from dbserver.dbworker import DBWorker
 
 
 class Ui_MainWindow(object):
@@ -58,7 +59,8 @@ class Ui_MainWindow(object):
 
 
     def setupUi(self, MainWindow):
-        self.CM = CharManager()
+        self.dbw = DBWorker()
+        self.CM = CharManager(self.dbw)
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(492, 492)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
@@ -170,6 +172,9 @@ class Ui_MainWindow(object):
         self.tabWidget.addTab(self.tab_Enum, "")
         self.pushButtonSave = QtWidgets.QPushButton(self.centralwidget)
         self.pushButtonSave.setGeometry(QtCore.QRect(380, 410, 93, 28))
+        self.pushButton_3 = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_3.setGeometry(QtCore.QRect(40, 410, 93, 28))
+        self.pushButton_3.setObjectName("pushButton_3")
         self.pushButtonSave.setObjectName("pushButtonSave")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -206,6 +211,7 @@ class Ui_MainWindow(object):
         self.pushButtonEnumDel.setText(_translate("MainWindow", "Удалить"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_Enum), _translate("MainWindow", "enum"))
         self.pushButtonSave.setText(_translate("MainWindow", "Сохранить"))
+        self.pushButton_3.setText(_translate("MainWindow", "Назад"))
 
 class EditCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
@@ -235,7 +241,8 @@ class EditCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         item = QtWidgets.QTableWidgetItem(value)
         item.setTextAlignment(Qt.AlignCenter)
         item.setFlags(item.flags() & ~QtCore.Qt.ItemFlag.ItemIsEditable)
-        self.tableWidgetValues.setItem(self.tableWidgetValues.rowCount()-1, 0, item)
+        i = self.tableWidgetValues.rowCount()
+        self.tableWidgetValues.setItem(i-1, 0, item)
 
     def delBtnush(self):
         ind = self.tableWidgetValues.currentRow()
@@ -273,8 +280,6 @@ class EditCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         for v in cvalues:
             self.CM.addvalue(id, v)
 
-
-
     def radioBtnClicked(self, val):
         indexes = {'Пустой': 0, 'Перечислимый': 3, 'Логический': 2, 'Числовой': 1}
         rb = self.sender()
@@ -282,18 +287,31 @@ class EditCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if rb.isChecked():
             i = rb.tabIndex
             self.tabWidget.setCurrentIndex(i)
-            if values:
-                self.clearAllWidgets()
-                if i == 0:
-                    pass
-                elif i == 1:
+            #if values:
+            self.clearAllWidgets()
+            if i == 0:
+                pass
+            elif i == 1:
+                if not values:
+                    self.lineFrom.setText('')
+                    self.lineTo.setText('')
+                else:
                     self.lineFrom.setText(values[0])
                     self.lineTo.setText(values[1])
-                elif i == 2:
+            elif i == 2:
+                if not values:
+                    self.lineTrue.setText('')
+                    self.lineFalse.setText('')
+                else:
                     self.lineTrue.setText(values[0])
                     self.lineFalse.setText(values[1])
-                elif i == 3:
-                    self.setUpTable()
+            elif i == 3:
+                self.setUpTable()
+
+    def returnM(self):
+        self.close()
+        if self.parent():
+            self.parent().show()
 
     def setConnect(self):
         self.comboBoxChar.currentIndexChanged.connect(self.comboBoxChanged)
@@ -304,6 +322,7 @@ class EditCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButtonEnumAdd.clicked.connect(self.addBtnPush)
         self.pushButtonEnumDel.clicked.connect(self.delBtnush)
         self.pushButtonSave.clicked.connect(self.saveBtnPush)
+        self.pushButton_3.clicked.connect(self.returnM)
 
     def __init__(self, parent=None):
         super().__init__(parent)

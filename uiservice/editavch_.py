@@ -71,6 +71,7 @@ class Ui_MainWindow(object):
         self.tabWidget = QtWidgets.QTabWidget(self.centralwidget)
         self.tabWidget.setGeometry(QtCore.QRect(130, 160, 321, 91))
         self.tabWidget.setObjectName("tabWidget")
+        self.tabWidget.tabBar().setHidden(True)
         self.tab_Empty = QtWidgets.QWidget()
         self.tab_Empty.setObjectName("tab_Empty")
         self.tabWidget.addTab(self.tab_Empty, "")
@@ -222,19 +223,23 @@ class EditAvtoCharWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         elif itab == 1:
             value = self.spinBoxInt.text()
         elif itab == 2:
-            value = self.comboBoxLog.text()
+            value = self.comboBoxLog.currentText()
         elif itab == 3:
-            value = self.comboBoxEnum.text()
+            value = self.comboBoxEnum.currentText()
         self.manAC.updatevalue(self.curavtocharobj['id'], value)
         self.curavtocharobj = self.manAC.findbyid(self.curavtocharobj['id'])
         self.setTabW()
 
-
+    def returnM(self):
+        self.close()
+        if self.parent():
+            self.parent().show()
 
     def setConnect(self):
         self.pushButton.clicked.connect(self.saveBtnClicked)
         self.comboBoxAvto.currentIndexChanged.connect(self.changedComboAvto)
         self.comboBoxChar.currentIndexChanged.connect(self.changedComboChar)
+        self.pushButton_3.clicked.connect(self.returnM)
 
     def __init__(self, parent=None):
         super().__init__(parent)
