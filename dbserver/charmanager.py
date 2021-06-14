@@ -153,11 +153,25 @@ class CharManager :
     def deletevalue(self, obj: dict) -> None:
         return self.deletevalue(obj['id'])
 
+    def getlogs(self) -> str:
+        data = self.findall()
+        logs = ''
+        for d in data:
+            if not d.get('type'):
+                logs += 'Характеристика "{}" не имеет типа.\n'.format(d['name'])
+            if not d.get('cvalues'):
+                logs += 'Характеристика "{}" не имеет значений.\n'.format(d['name'])
+        if not logs:
+            logs = 'Характеристики: нет предупреждений.\n'
+        else:
+            logs = 'Характеристики:\n'+logs
+        logs += '\n'
+        return logs
 
 if __name__ == '__main__':
     dbw = DBWorker()
     CM = CharManager(dbw)
-
+    print(CM.getlogs())
     """obj = CM.findbyid(7)
     print(obj)
     CM.addvalue(obj, 'false')

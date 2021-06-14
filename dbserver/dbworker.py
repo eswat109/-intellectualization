@@ -127,7 +127,7 @@ class DBWorker:
         strvalues = ""
         for colname in self.gettitleswoclose(tables)[1:]:
             if params.get(colname) != None:
-                if params.get(colname) == '':
+                if params.get(colname) in ('', -1):
                     params[colname] = None
                 if strvalues != "":
                     strvalues += ', '

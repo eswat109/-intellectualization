@@ -71,6 +71,19 @@ class AvtoManager :
     def updateprice(self, obj: dict, price: int) -> None:
         self.updateprice(obj['id'], price)
 
+    def getlogs(self):
+        data = self.findall()
+        logs = ''
+        for d in data:
+            if not d.get('price'):
+                logs += 'Автомобиль с номером "{}" не имеет цены.\n'.format(d['name'])
+        if not logs:
+            logs = 'Автомобили: нет предупреждений.\n'
+        else:
+            logs = 'Автомобили:\n'+logs
+        logs += '\n'
+        return logs
+
 if __name__ == '__main__':
     dbw = DBWorker()
     AV = AvtoManager(dbw)

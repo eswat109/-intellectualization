@@ -14,6 +14,7 @@ from uiservice.editchar import EditCharWindow
 from uiservice.addavto import AddAvtoWindow
 from uiservice.addavch import AddAvtoCharWindow
 from uiservice.editavch_ import EditAvtoCharWindow
+from uiservice.classdet import ClassDetWindow
 
 
 class Ui_MainWindow(object):
@@ -75,6 +76,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_3.clicked.connect(self.openAddAvto)
         self.pushButton_4.clicked.connect(self.openAddAvtoChar)
         self.pushButton_5.clicked.connect(self.openEditAvtoChar)
+        self.pushButton_7.clicked.connect(self.openClassDet)
 
     def openAddChar(self):
         self.close()
@@ -100,6 +102,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.close()
         self.EditAvtoCharW = EditAvtoCharWindow(self)
         self.EditAvtoCharW.show()
+
+    def openClassDet(self):
+        self.close()
+        self.ClassDetW = ClassDetWindow(self)
+        self.ClassDetW.show()
 
 
 

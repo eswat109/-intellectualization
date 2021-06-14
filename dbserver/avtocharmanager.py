@@ -91,10 +91,35 @@ class AvtoCharManager :
     def deletebyac(self, avto_id: int, char_id: int) -> None:
         return self.dbw.deletebyparams({'avto': avto_id, 'char': char_id}, self.table)
 
+    def getlogs(self):
+        '''data = self.findall()
+        CM = CharManager()
+        AV = AvtoManager()'''
+        data = self.dbw.getall()
+        #print(data)
+        '''
+        avtoids = [d['id'] for d in AV.findall()]
+        chardata = CM.findall()
+        charids = [d['id'] for d in chardata]'''
+        logs = ''
+        for d in data:
+            for k in d.keys():
+                if k in ['id', 'price']:
+                    continue
+                if not d.get(k):
+                    logs += 'Автомобиль "{}" не имеет значения характеристики "{}".\n'.format(d['id'], k)
+        if not logs:
+            logs = 'Значения характеристк автомобилей: нет предупреждений.\n'
+        else:
+            logs = 'Значения характеристк автомобилей:\n'+logs
+        logs += '\n'
+        return logs
+
 if __name__ == '__main__':
     dbw = DBWorker()
     ACM = AvtoCharManager(dbw)
-    objs = ACM.findall()
+    print(ACM.getlogs())
+    """objs = ACM.findall()
     print(objs)
     dbw.closeCon()
     dbw.openCon()
@@ -103,6 +128,5 @@ if __name__ == '__main__':
     print(obj)
     ACM.deletebyac(1, 18)
     obj = ACM.findbyavtochar(1, 18)
-    print(obj)
-    """"""
+    print(obj)"""
     pass
