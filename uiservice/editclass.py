@@ -191,6 +191,12 @@ class EditClassWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def setConnect(self):
         self.classComboBox.currentIndexChanged.connect(self.setWorkPlace)
         self.saveBtn.clicked.connect(self.saveAll)
+        self.backBtn.clicked.connect(self.returnM)
+
+    def returnM(self):
+        self.close()
+        if self.parent():
+            self.parent().show()
 
     def __init__(self, parent=None):
         super().__init__(parent)

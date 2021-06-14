@@ -55,8 +55,12 @@ class CheckWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         dbw = DBWorker()
         logs = '' + ClassManager(dbw).getlogs() + CharManager(dbw).getlogs() + AvtoManager(dbw).getlogs() + AvtoCharManager(dbw).getlogs()
         self.textBrowser.setText(logs)
+        self.backBtn.clicked.connect(self.returnM)
 
-
+    def returnM(self):
+        self.close()
+        if self.parent():
+            self.parent().show()
 
 
 if __name__ == "__main__":
